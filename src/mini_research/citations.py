@@ -11,13 +11,21 @@ from collections.abc import Mapping
 
 from mini_research.models import CitationValidation, SourceRecord
 
+# Writer 偶尔会把合法 ID 写成 ``[ S1 ]``。这只是排版空白，不应让整份报告失败，
+# 因此先容忍方括号内、ID 两侧的普通横向空白，再统一渲染为严格的 ``[S1]``。
+# 这里故意不接受 ``[S1, S2]``、``【S1】``、``[S 1]`` 等其他变体：扩大规则会让
+# 无法可靠解释的格式悄悄通过。
 # ``(?!\()`` 避免把已经渲染成 ``[S1](url)`` 的引用再次处理。
-_CITATION_PATTERN = re.compile(r"\[S(?P<number>[1-9]\d*)\](?!\()")
+_CITATION_PATTERN = re.compile(r"\[[ \t]*S(?P<number>[1-9]\d*)[ \t]*\](?!\()")
 _BARE_URL_PATTERN = re.compile(r"https?://[^\s)>\]]+")
 
 
 def extract_citation_ids(markdown: str) -> list[str]:
-    """按首次出现顺序返回不重复的引用 ID。"""
+    """按首次出现顺序返回不重复的引用 ID。
+
+    ``[S1]`` 和 ``[ S1 ]`` 会得到相同的 ``S1``；来源编号是否合法仍由
+    :func:`validate_citations` 对照来源台账判断。
+    """
 
     seen: set[str] = set()
     ordered: list[str] = []
@@ -59,7 +67,10 @@ def validate_citations(
 
 
 def render_report(markdown: str, sources: Mapping[str, SourceRecord]) -> str:
-    """把通过校验的 ID 渲染成链接，再追加确定性的来源列表。"""
+    """把通过校验的 ID 渲染成规范链接，再追加确定性的来源列表。
+
+    替换结果始终使用 ``[S1](url)``，所以输入中的无害空白不会进入最终报告。
+    """
 
     validation = validate_citations(markdown, sources)
     if not validation.valid:

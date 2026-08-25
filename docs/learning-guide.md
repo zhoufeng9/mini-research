@@ -68,6 +68,7 @@ python -m pytest tests/test_search.py tests/test_citations.py -q
 - URL 规范化为什么要移除 `utm_*` 和 fragment；
 - 同一个 URL 被两次发现时为什么不能产生两个来源 ID；
 - Writer 只写 `[S1]`，程序为什么还要检查未知 ID 和裸 URL；
+- Prompt 要求严格格式，但程序为什么仍会把 `[ S1 ]` 规范化成 `[S1]`；
 - “引用 ID 存在”与“引用真的支持结论”是两个不同问题。
 
 完成检查点：你能手写一个包含 `[S999]` 的报告，并预测校验结果。

@@ -86,7 +86,10 @@ Evidence:
 {evidence}
 
 Citation rules:
-- cite claims only with the supplied IDs, for example [S1];
+- add one or more citations immediately after every factual claim derived from evidence;
+- cite claims only with the supplied IDs, using the exact form [S1];
+- put no spaces inside a citation: write [S1], never [ S1 ];
+- cite multiple sources as adjacent markers such as [S1][S2], never [S1, S2];
 - never write or invent a URL;
 - do not add a Sources/References section (the program adds it deterministically);
 - do not cite a source that does not support the sentence;
