@@ -151,7 +151,8 @@ mini-research "大模型推理优化技术" \
   --max-rounds 1 \
   --max-searches 1 \
   --max-pages 2 \
-  --show-trace
+  --show-trace \
+  --show-draft-on-error
 ```
 
 运行结束后依次检查：
@@ -161,6 +162,9 @@ mini-research "大模型推理优化技术" \
 3. 报告里的链接是否都来自 Sources；
 4. `errors` 是否出现搜索或证据抽取失败；
 5. 不要只看文字“像不像答案”，还要抽查引用是否真的支持句子。
+
+`--show-draft-on-error` 只在引用校验失败时显示未发布草稿，用来观察模型实际采用的引用
+格式；正常成功报告不受影响。
 
 ## 下一次一起实现什么
 

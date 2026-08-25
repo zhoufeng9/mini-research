@@ -78,6 +78,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Print the workflow trace to stderr after the report finishes",
     )
+    parser.add_argument(
+        "--show-draft-on-error",
+        action="store_true",
+        help="Print an invalid, unpublished draft to stderr for citation debugging",
+    )
     return parser
 
 
@@ -95,6 +100,22 @@ def print_trace(result: ResearchState) -> None:
         f"{len(result['evidence'])} evidence item(s)",
         file=sys.stderr,
     )
+
+
+def print_invalid_draft(result: ResearchState) -> None:
+    """打印未通过引用校验的草稿，并明确标记它不是最终报告。
+
+    默认不显示失败草稿，避免用户误把它当成已经验证的结果。只有显式传入
+    ``--show-draft-on-error`` 时，CLI 才调用这个调试函数。
+    """
+
+    draft = result["draft_report"].strip()
+    if not draft:
+        return
+
+    print("\n--- Invalid draft (debug only; not published) ---", file=sys.stderr)
+    print(draft, file=sys.stderr)
+    print("--- End invalid draft ---", file=sys.stderr)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -123,6 +144,8 @@ def main(argv: list[str] | None = None) -> int:
         print("Research completed, but citation validation failed.", file=sys.stderr)
         for error in result["errors"]:
             print(f"- {error}", file=sys.stderr)
+        if args.show_draft_on_error:
+            print_invalid_draft(result)
         return 2
 
     report = result["final_report"]

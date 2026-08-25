@@ -166,6 +166,17 @@ mini-research "大模型推理优化技术" \
 - 停止原因 `stop_reason`；
 - 搜索次数、来源数量和证据数量。
 
+如果退出码是 `2`，可以显式查看未通过引用校验的草稿：
+
+```bash
+mini-research "大模型推理优化技术" \
+  --show-trace \
+  --show-draft-on-error
+```
+
+这个草稿只用于排查模型到底写了 `[S1, S2]`、`【S1】`，还是完全漏掉引用。CLI 会用
+`debug only; not published` 标记它；不要把失败草稿当成最终研究结果。
+
 常见停止原因：
 
 | `stop_reason` | 含义 |
